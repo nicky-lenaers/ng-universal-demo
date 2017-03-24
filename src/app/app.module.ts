@@ -15,7 +15,13 @@ import { TransferHttpModule } from '../modules/transfer-http/transfer-http.modul
     TransferHttpModule,
     RouterModule.forRoot([
       { path: '', component: HomeView, pathMatch: 'full'},
-      { path: 'lazy', loadChildren: './+lazy/lazy.module#LazyModule'}
+      {
+        path: 'lazy',
+        loadChildren: './+lazy/lazy.module#LazyModule',
+        data: {
+          title: 'Lazy Title'
+        }
+      }
     ])
 	],
 	declarations: [ AppComponent, HomeView ],

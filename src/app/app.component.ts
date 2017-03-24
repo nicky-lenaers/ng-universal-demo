@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core'
 import { TransferState } from '../modules/transfer-state/transfer-state';
+import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Title } from '@angular/platform-browser';
+import 'rxjs';
 
 @Component({
 	selector: 'demo-app',
@@ -16,8 +19,31 @@ import { TransferState } from '../modules/transfer-state/transfer-state';
   ]
 })
 export class AppComponent implements OnInit {
-  constructor(private cache: TransferState) {}
+
+  constructor(
+    private _titleService: Title,
+    private _router: Router,
+    private _activatedRoute: ActivatedRoute,
+    private cache: TransferState
+    ) {}
   ngOnInit() {
+
     this.cache.set('cached', true);
+
+    this._router.events
+			.filter(event => event instanceof NavigationEnd)
+			.map(() => this._activatedRoute)
+			.map(route => {
+				while (route.firstChild) route = route.firstChild;
+				return route;
+			})
+			.filter(route => route.outlet === 'primary')
+  			.mergeMap(route => route.data)
+			.subscribe((data) => {
+				console.log('NavigationEnd:', data);
+        this._titleService.setTitle(data.title);
+			});
+
+
   }
 }
